@@ -5,7 +5,7 @@
  * 利用递归的方式求解 计算左中右的值 返回最大的即可
  * 同时 利用这种思想 可以设计一个时间复杂度为线性的算法
  * 即k+1规模的最大连续子数组 只可能位于k规模的最大数组
- * 或者i到k+1的连续子数组上 利用这种思想既可以设计线性时间复杂度的算法
+ * 或者i到k+1的连续子数组上 利用这种思想既可以设计线性时间复杂度的算法 动态规划思想
  * 详情见《算法导论》
  */
 typedef struct{
@@ -36,6 +36,12 @@ Item Find_Max_SubArray_Linear(const int *array,int size);
 Item Find_Cross_Max_SubArray_Linear(const int *array,int right);
 
 
+/*
+ * 动态规划算法求解
+ */
+
+int maxSubArray(const int* nums, int numsSize);
+
 int main() {
     Item data1;
     Item data2;
@@ -55,8 +61,10 @@ int main() {
     printf("%d\n",sum2);
     data1 = Find_Max_SubArray_Linear(array1,size1);
     data2 = Find_Max_SunArray_Recursion_Interface(array2,size2);
+    int data3 = maxSubArray(array2,size2);
     printf("Linear: \nleft:%d right:%d value:%d\n",data1.left,data1.right,data1.value);
     printf("Recursion: \nleft:%d right:%d value:%d\n",data2.left,data2.right,data2.value);
+    printf("DynamicPrograming:\nvalue:%d\n",data3);
     return 0;
 }
 
@@ -130,6 +138,7 @@ Item Find_Cross_Max_SubArray_Recursion(const int *array,int left,int right){
     return data;
 }
 
+
 //中间的长度为max
 Item Find_Cross_Max_SubArray_Linear(const int *array,int right){
     int left=0;
@@ -166,3 +175,29 @@ Item Find_Max_SubArray_Linear(const int *array,int size){
     return MaxInfo;
 }
 
+
+/*
+ * 动态规划算法更加快速
+ */
+
+int maxSubArray(const int* nums, int numsSize) {
+    //动态规划的思想
+    int buf[numsSize];
+    for(int i=0;i<numsSize;i++){
+        buf[i] = 0;//初始化
+    }
+    buf[0]=nums[0];//初始化第一个数
+    int max = buf[0];//第一个数为max
+    for(int i=1;i<numsSize;i++){
+        if(buf[i-1]>=0){
+            buf[i] =buf[i-1] + nums[i];
+        }
+        else{
+            buf[i] = nums[i];
+        }
+        if(buf[i]>max){
+            max=buf[i];
+        }
+    }
+    return max;
+}
